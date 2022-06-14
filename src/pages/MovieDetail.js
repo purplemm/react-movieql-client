@@ -59,10 +59,10 @@ function MovieDetail(){
     return (
         <Container>
             <Column>
-                <Title>{loading ? "Loading..." : `${data.movie.title}`}</Title>
-                <Subtitle>⭐️ {data && data.movie.rating}</Subtitle>
+                <Title>{loading ? "Loading..." : `${data?.movie.title}`}</Title>
+                <Subtitle>⭐️ {data?.movie.rating}</Subtitle>
             </Column>
-            <Image bg={data && data.movie.medium_cover_image} />
+            <Image bg={data?.movie.medium_cover_image} />
         </Container>
     )
 }
