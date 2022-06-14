@@ -9,6 +9,7 @@ const GET_MOVIE = gql`
             title
             medium_cover_image
             rating
+            isLiked @client
         }
     }
 `
@@ -50,17 +51,37 @@ const Image = styled.div`
 
 function MovieDetail(){
     const { id } = useParams();
-    const { data, loading } = new useQuery(GET_MOVIE, {
+    const { data, loading, client: { cache } } = new useQuery(GET_MOVIE, {
         variables: {
             movieId: id
         }
     });
+
+    const onClick = () => {
+        cache.writeFragment({
+            //  백틱 사용 시 스페이스는 공백을 넣게 되어 오타 주의!!!!!!!!!!!!!!!!!!!!!
+            id: `Movie:${id}`,
+            fragment: gql`
+                # 'fragment ~ on'은 고정 ~은 작명가능, 'Movie'는 GraphQl API에서 온 타입
+                fragment MovieFragment on Movie {
+                    isLiked
+                }
+            `,
+            data: {
+                isLiked: !data.movie.isLiked 
+            }
+        });
+    };
 
     return (
         <Container>
             <Column>
                 <Title>{loading ? "Loading..." : `${data?.movie.title}`}</Title>
                 <Subtitle>⭐️ {data?.movie.rating}</Subtitle>
+                
+                <button type="button" onClick={onClick}>
+                    {data?.movie.isLiked ? "Unlike" : "Like"}
+                </button>
             </Column>
             <Image bg={data?.movie.medium_cover_image} />
         </Container>
